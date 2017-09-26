@@ -2,9 +2,9 @@ import numpy as np
 
 class NNModel:
 
-    def __init__(self, image_1, image_2):
-        self._img1 = image_1
-        self._img2 = image_2
+    def __init__(self):
+        # self._img1 = image_1
+        # self._img2 = image_2
 
         self._observers = []
 
@@ -24,7 +24,7 @@ class NNModel:
     def img2(self, val):
         self.img2 = val
 
-    def addObservers(self, observer):
+    def addObserver(self, observer):
         self._observers.append(observer)
 
     def deleteObserver(self, observer):
