@@ -21,19 +21,23 @@ class NNView(QMainWindow, NNModelObserver, metaclass=NNMeta):
 
         #Добавляем обработчики событий
         self.ui.class_1.clicked.connect(self.addDataX)
+        self.ui.class_2.clicked.connect(self.addDataY)
 
-        self.additionalSettings()
+        self.treeSettings()
 
-    def additionalSettings(self):
-        item1 = QTreeWidgetItem(['Класс 1'])
-        item1.addChild(QTreeWidgetItem(['']))
-        item2 = QTreeWidgetItem(['Класс 2'])
-        item2.addChild(QTreeWidgetItem(['']))
-        item3 = QTreeWidgetItem(['Тест'])
-        item3.addChild(QTreeWidgetItem(['']))
-        self.ui.data_tree.addTopLevelItem(item1)
-        self.ui.data_tree.addTopLevelItem(item2)
-        self.ui.data_tree.addTopLevelItem(item3)
+    def treeSettings(self):
+        self.item1 = QTreeWidgetItem(['Класс 1'])
+        self.item2 = QTreeWidgetItem(['Класс 2'])
+        self.item3 = QTreeWidgetItem(['Тест'])
+        self.ui.data_tree.addTopLevelItem(self.item1)
+        self.ui.data_tree.addTopLevelItem(self.item2)
+        self.ui.data_tree.addTopLevelItem(self.item3)
+        self.connect(self.ui.data_tree, SIGNAL("itemClicked(QTreeWidgetItem*, int)"), self.onClickItem)
+
+    def onClickItem(self, item, column):
+        path = item.text(column)
+        parent = item.parent().text(0)
+
 
     def modelIsChanged(self):
         pass
@@ -46,4 +50,14 @@ class NNView(QMainWindow, NNModelObserver, metaclass=NNMeta):
         if dlg.exec_():
             filenames = dlg.selectedFiles()
         for f in filenames:
-            print(f)
+            self.item1.addChild(QTreeWidgetItem([str(f)]))
+
+    def addDataY(self):
+        dlg = QFileDialog()
+        dlg.setFileMode(QFileDialog.AnyFile)
+        dlg.setFileMode(QFileDialog.ExistingFiles)
+        filenames = QStringListModel()
+        if dlg.exec_():
+            filenames = dlg.selectedFiles()
+        for f in filenames:
+            self.item2.addChild(QTreeWidgetItem([str(f)]))
