@@ -105,6 +105,58 @@
            <string/>
           </property>
          </widget>
+         <widget class="QLabel" name="lbl1">
+          <property name="geometry">
+           <rect>
+            <x>140</x>
+            <y>150</y>
+            <width>59</width>
+            <height>14</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string>Класс 1:</string>
+          </property>
+         </widget>
+         <widget class="QLabel" name="lbl2">
+          <property name="geometry">
+           <rect>
+            <x>140</x>
+            <y>180</y>
+            <width>59</width>
+            <height>14</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string>Класс 2:</string>
+          </property>
+         </widget>
+         <widget class="QLabel" name="sim_1">
+          <property name="geometry">
+           <rect>
+            <x>200</x>
+            <y>150</y>
+            <width>59</width>
+            <height>14</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+         </widget>
+         <widget class="QLabel" name="sim_2">
+          <property name="geometry">
+           <rect>
+            <x>200</x>
+            <y>180</y>
+            <width>59</width>
+            <height>14</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+         </widget>
         </widget>
         <widget class="QWidget" name="tab_2">
          <attribute name="title">
