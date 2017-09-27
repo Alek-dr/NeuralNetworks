@@ -1,9 +1,9 @@
 class NNModel:
 
     def __init__(self):
-        self._X = []
-        self._Y = []
-        self._Test = []
+        self._X = None
+        self._Y = None
+        self._Test = None
         self._observers = []
 
     @property
@@ -39,3 +39,6 @@ class NNModel:
     def notifyObservers(self):
         for x in self._observers:
             x.modelIsChanged()
+
+    def learn(self, params):
+        pass

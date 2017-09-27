@@ -9,22 +9,26 @@ from Model.NeuralNetwork.Metrics import similarity
 
 class NNView(QMainWindow, NNModelObserver, metaclass=NNMeta):
 
-    def __init__(self, inController, inModel, parent=None):
+    def __init__(self, inController, parent=None):
         super(QMainWindow, self).__init__(parent)
         self.mController = inController
-        self.mModel = inModel
 
         #Визуальное представление
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
 
         #регистрируем представление в качестве наблюдателя
-        self.mModel.addObserver(self)
+        #self.mModel.addObserver(self)
 
         #Добавляем обработчики событий
         self.ui.class_1.clicked.connect(self.addDataX)
         self.ui.class_2.clicked.connect(self.addDataY)
         self.ui.test_class.clicked.connect(self.addTest)
+        self.ui.Learn.clicked.connect(self.learn_clicked)
+        self.ui.Hebb.clicked.connect(self.learn_alg)
+        self.ui.LMS.clicked.connect(self.learn_alg)
+        self.ui.polar.clicked.connect(self.signal_change)
+        self.ui.biPolar.clicked.connect(self.signal_changed)
 
         self.treeSettings()
         self.ui.img_1.setScaledContents(True)
@@ -35,7 +39,19 @@ class NNView(QMainWindow, NNModelObserver, metaclass=NNMeta):
         self.current_class_2 = None
         self.current_test = None
 
-        self.active_tab = "Однослойный персептрон"
+        self.active_tab = 'Однослойный персептрон'
+        self.mController.modelIsChanged(self.active_tab) #это в дальнейшем делать по клику
+
+    def signal_change(self):
+        #Когда изменяется тип сигнала, надо как то менять туда сюда
+        pass
+
+    def learn_alg(self):
+        self.mController.set_params()
+
+    def learn_clicked(self):
+        self.mController.set_params()
+        self.mController.learn()
 
     def treeSettings(self):
         self.item1 = QTreeWidgetItem(['Класс 1'])
@@ -47,6 +63,7 @@ class NNView(QMainWindow, NNModelObserver, metaclass=NNMeta):
         self.connect(self.ui.data_tree, SIGNAL("itemClicked(QTreeWidgetItem*, int)"), self.onClickItem)
 
     def modelIsChanged(self):
+        #когда кликается таб
         pass
 
     def onClickItem(self, item, column):
@@ -91,8 +108,6 @@ class NNView(QMainWindow, NNModelObserver, metaclass=NNMeta):
             self.item1.addChild(QTreeWidgetItem([str(f)]))
             img = imread(f)
             self.mController.addDataX(img)
-
-
 
     def addDataY(self):
         dlg = QFileDialog()

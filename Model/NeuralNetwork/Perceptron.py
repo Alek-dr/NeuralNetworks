@@ -7,14 +7,16 @@ class Perceptron(NNModel):
         self.neuron = None
         pass
 
-    @ super.setter
-    def dataX(self, val):
-        self.dataX = val
+    def learn(self, params):
+        if self.dataX is not None:
+            if len(self.dataX)>0:
+                if params['Hebb']==True:
+                    self.Hebb()
+                elif params['LMS']==True:
+                    self.LMS()
 
-    @super.setter
-    def dataY(self, val):
-        self.dataY = val
+    def Hebb(self):
+        pass
 
-    @super.setter
-    def dataTest(self, val):
-        self.dataTest = val
+    def LMS(self):
+        pass
