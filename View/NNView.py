@@ -35,6 +35,8 @@ class NNView(QMainWindow, NNModelObserver, metaclass=NNMeta):
         self.current_class_2 = None
         self.current_test = None
 
+        self.active_tab = "Однослойный персептрон"
+
     def treeSettings(self):
         self.item1 = QTreeWidgetItem(['Класс 1'])
         self.item2 = QTreeWidgetItem(['Класс 2'])
@@ -43,8 +45,6 @@ class NNView(QMainWindow, NNModelObserver, metaclass=NNMeta):
         self.ui.data_tree.addTopLevelItem(self.item2)
         self.ui.data_tree.addTopLevelItem(self.item3)
         self.connect(self.ui.data_tree, SIGNAL("itemClicked(QTreeWidgetItem*, int)"), self.onClickItem)
-
-
 
     def modelIsChanged(self):
         pass
@@ -89,6 +89,10 @@ class NNView(QMainWindow, NNModelObserver, metaclass=NNMeta):
             filenames = dlg.selectedFiles()
         for f in filenames:
             self.item1.addChild(QTreeWidgetItem([str(f)]))
+            img = imread(f)
+            self.mController.addDataX(img)
+
+
 
     def addDataY(self):
         dlg = QFileDialog()

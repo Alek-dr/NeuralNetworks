@@ -1,28 +1,34 @@
-import numpy as np
-
 class NNModel:
 
     def __init__(self):
-        # self._img1 = image_1
-        # self._img2 = image_2
-
+        self._X = []
+        self._Y = []
+        self._Test = []
         self._observers = []
 
     @property
-    def img1(self):
-        return self._img1
+    def dataX(self):
+        return self._X
 
     @property
-    def img2(self):
-        return self._img2
+    def dataY(self):
+        return self._Y
 
-    @img1.setter
-    def img1(self,val):
-        self.img1 = val
+    @property
+    def dataTest(self):
+        return self._Test
 
-    @img2.setter
-    def img2(self, val):
-        self.img2 = val
+    @dataX.setter
+    def dataX(self,val):
+        self._X = val
+
+    @dataY.setter
+    def dataY(self, val):
+        self._Y = val
+
+    @dataTest.setter
+    def dataTest(self, val):
+        self._Test = val
 
     def addObserver(self, observer):
         self._observers.append(observer)
