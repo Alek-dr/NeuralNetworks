@@ -29,8 +29,8 @@ class NNView(QMainWindow, NNModelObserver, metaclass=NNMeta):
         self.ui.LMS.clicked.connect(self.learn_alg)
         self.ui.polar.clicked.connect(self.signal_change)
         self.ui.biPolar.clicked.connect(self.signal_change)
-        #self.ui.tabWidget.clicked.connect(self.tab_clicked)
         self.ui.tabWidget.currentChanged.connect(self.tab_changed)
+        self.ui.test_btn.clicked.connect(self.test_clicked)
 
         self.treeSettings()
         self.ui.img_1.setScaledContents(True)
@@ -41,12 +41,14 @@ class NNView(QMainWindow, NNModelObserver, metaclass=NNMeta):
         self.current_class_2 = None
         self.current_test = None
 
-        #self.active_tab = 'Однослойный персептрон'
         self.mController.modelIsChanged(self.ui.tabWidget.currentWidget().objectName())
 
     def tab_changed(self):
         self.mController.modelIsChanged(self.ui.tabWidget.currentWidget().objectName())
 
+    def test_clicked(self):
+        label = self.mController.test(0)
+        self.ui.test_lbl.setText(str(label))
 
     def signal_change(self):
         btn = self.sender()
@@ -58,7 +60,8 @@ class NNView(QMainWindow, NNModelObserver, metaclass=NNMeta):
 
     def learn_clicked(self):
         self.mController.set_params()
-        self.mController.learn()
+        iter = self.mController.learn()
+        self.ui.iterations_lbl.setText(str(iter))
 
     def treeSettings(self):
         self.item1 = QTreeWidgetItem(['Класс 1'])

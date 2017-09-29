@@ -8,10 +8,6 @@ class NNController():
         self.mModel = inModel
         self.mView = NNView(self)
         self.mView.show()
-
-        # self.X = None
-        # self.Y = None
-        # self.Test = None
         self.params = {}
 
     def set_params(self):
@@ -103,7 +99,14 @@ class NNController():
     #endregion
 
     def learn(self):
-        self.mModel.learn(self.params)
+        iter = self.mModel.learn(self.params)
+        return iter
+
+    def test(self,img):
+        #потом придумаю как передать конкретную картинку
+        label = self.mModel.test(img)
+        return label
+
 
 
 

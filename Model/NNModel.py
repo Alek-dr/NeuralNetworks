@@ -18,3 +18,6 @@ class NNModel:
 
     def learn(self, params):
         pass
+
+    def through(self, inputs):
+        pass

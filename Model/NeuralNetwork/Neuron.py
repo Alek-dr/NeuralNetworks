@@ -19,12 +19,12 @@ class Neuron:
     def adderOutput(self,inputs):
         k = len(inputs)
         out = 0
-        w = 0
+        w = 1
         for i in range(k):
             for j in range(k):
                 out += self.weights[w]*inputs[i][j]
                 w+=1
-        out += 1*self.bias
+        out += self.weights[0]*self.bias
         return out
 
     def functionOutput(self, v):
