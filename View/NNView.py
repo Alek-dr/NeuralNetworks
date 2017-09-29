@@ -28,7 +28,9 @@ class NNView(QMainWindow, NNModelObserver, metaclass=NNMeta):
         self.ui.Hebb.clicked.connect(self.learn_alg)
         self.ui.LMS.clicked.connect(self.learn_alg)
         self.ui.polar.clicked.connect(self.signal_change)
-        self.ui.biPolar.clicked.connect(self.signal_changed)
+        self.ui.biPolar.clicked.connect(self.signal_change)
+        #self.ui.tabWidget.clicked.connect(self.tab_clicked)
+        self.ui.tabWidget.currentChanged.connect(self.tab_changed)
 
         self.treeSettings()
         self.ui.img_1.setScaledContents(True)
@@ -39,12 +41,16 @@ class NNView(QMainWindow, NNModelObserver, metaclass=NNMeta):
         self.current_class_2 = None
         self.current_test = None
 
-        self.active_tab = 'Однослойный персептрон'
-        self.mController.modelIsChanged(self.active_tab) #это в дальнейшем делать по клику
+        #self.active_tab = 'Однослойный персептрон'
+        self.mController.modelIsChanged(self.ui.tabWidget.currentWidget().objectName())
+
+    def tab_changed(self):
+        self.mController.modelIsChanged(self.ui.tabWidget.currentWidget().objectName())
+
 
     def signal_change(self):
-        #Когда изменяется тип сигнала, надо как то менять туда сюда
-        pass
+        btn = self.sender()
+        self.mController.signal_type_changed(btn.objectName())
 
     def learn_alg(self):
         self.mController.set_params()
@@ -63,7 +69,6 @@ class NNView(QMainWindow, NNModelObserver, metaclass=NNMeta):
         self.connect(self.ui.data_tree, SIGNAL("itemClicked(QTreeWidgetItem*, int)"), self.onClickItem)
 
     def modelIsChanged(self):
-        #когда кликается таб
         pass
 
     def onClickItem(self, item, column):
@@ -118,6 +123,8 @@ class NNView(QMainWindow, NNModelObserver, metaclass=NNMeta):
             filenames = dlg.selectedFiles()
         for f in filenames:
             self.item2.addChild(QTreeWidgetItem([str(f)]))
+            img = imread(f)
+            self.mController.addDataY(img)
 
     def addTest(self):
         dlg = QFileDialog()
@@ -128,3 +135,5 @@ class NNView(QMainWindow, NNModelObserver, metaclass=NNMeta):
             filenames = dlg.selectedFiles()
         for f in filenames:
             self.item3.addChild(QTreeWidgetItem([str(f)]))
+            img = imread(f)
+            self.mController.addDataTest(img)

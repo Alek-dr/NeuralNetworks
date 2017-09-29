@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>768</width>
+    <width>806</width>
     <height>600</height>
    </rect>
   </property>
@@ -19,7 +19,7 @@
      <rect>
       <x>618</x>
       <y>-1</y>
-      <width>141</width>
+      <width>181</width>
       <height>551</height>
      </rect>
     </property>
@@ -160,7 +160,7 @@
      </item>
     </layout>
    </widget>
-   <widget class="QWidget" name="">
+   <widget class="QWidget" name="layoutWidget">
     <property name="geometry">
      <rect>
       <x>169</x>
@@ -178,7 +178,7 @@
        <property name="currentIndex">
         <number>0</number>
        </property>
-       <widget class="QWidget" name="tab">
+       <widget class="QWidget" name="SLP">
         <attribute name="title">
          <string>Однослойный персептрон</string>
         </attribute>
@@ -283,7 +283,7 @@
          </property>
         </widget>
        </widget>
-       <widget class="QWidget" name="tab_2">
+       <widget class="QWidget" name="MLP">
         <attribute name="title">
          <string>Многослойный персептрон</string>
         </attribute>
@@ -298,7 +298,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>768</width>
+     <width>806</width>
      <height>22</height>
     </rect>
    </property>

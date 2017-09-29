@@ -5,7 +5,15 @@ class Perceptron(NNModel):
 
     def __init__(self):
         self.neuron = None
-        pass
+        self._signal_type = 'polar'
+
+    @property
+    def signalType(self):
+        return self._signal_type
+
+    @signalType.setter
+    def signalType(self, val):
+        self._signalType = val
 
     def learn(self, params):
         if self.dataX is not None:
