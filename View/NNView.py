@@ -51,6 +51,7 @@ class NNView(QMainWindow, NNModelObserver, metaclass=NNMeta):
     def signal_change(self):
         btn = self.sender()
         self.mController.signal_type_changed(btn.objectName())
+        self.mController.set_params()
 
     def learn_alg(self):
         self.mController.set_params()
@@ -111,7 +112,7 @@ class NNView(QMainWindow, NNModelObserver, metaclass=NNMeta):
             filenames = dlg.selectedFiles()
         for f in filenames:
             self.item1.addChild(QTreeWidgetItem([str(f)]))
-            img = imread(f)
+            img = imread(f, mode='P')
             self.mController.addDataX(img)
 
     def addDataY(self):
@@ -123,7 +124,7 @@ class NNView(QMainWindow, NNModelObserver, metaclass=NNMeta):
             filenames = dlg.selectedFiles()
         for f in filenames:
             self.item2.addChild(QTreeWidgetItem([str(f)]))
-            img = imread(f)
+            img = imread(f, mode='P')
             self.mController.addDataY(img)
 
     def addTest(self):
@@ -135,5 +136,5 @@ class NNView(QMainWindow, NNModelObserver, metaclass=NNMeta):
             filenames = dlg.selectedFiles()
         for f in filenames:
             self.item3.addChild(QTreeWidgetItem([str(f)]))
-            img = imread(f)
+            img = imread(f, mode='P')
             self.mController.addDataTest(img)
