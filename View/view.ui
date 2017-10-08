@@ -138,16 +138,9 @@
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="class_1">
+      <widget class="QPushButton" name="add_class">
        <property name="text">
-        <string>Класс 1 +</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="class_2">
-       <property name="text">
-        <string>Класс 2 +</string>
+        <string>Класс +</string>
        </property>
       </widget>
      </item>
@@ -230,52 +223,13 @@
           <string/>
          </property>
         </widget>
-        <widget class="QLabel" name="lbl1">
+        <widget class="QLabel" name="info">
          <property name="geometry">
           <rect>
-           <x>140</x>
+           <x>138</x>
            <y>150</y>
-           <width>59</width>
-           <height>14</height>
-          </rect>
-         </property>
-         <property name="text">
-          <string>Класс 1:</string>
-         </property>
-        </widget>
-        <widget class="QLabel" name="lbl2">
-         <property name="geometry">
-          <rect>
-           <x>140</x>
-           <y>180</y>
-           <width>59</width>
-           <height>14</height>
-          </rect>
-         </property>
-         <property name="text">
-          <string>Класс 2:</string>
-         </property>
-        </widget>
-        <widget class="QLabel" name="sim_1">
-         <property name="geometry">
-          <rect>
-           <x>200</x>
-           <y>150</y>
-           <width>59</width>
-           <height>14</height>
-          </rect>
-         </property>
-         <property name="text">
-          <string/>
-         </property>
-        </widget>
-        <widget class="QLabel" name="sim_2">
-         <property name="geometry">
-          <rect>
-           <x>200</x>
-           <y>180</y>
-           <width>59</width>
-           <height>14</height>
+           <width>271</width>
+           <height>101</height>
           </rect>
          </property>
          <property name="text">
@@ -295,19 +249,6 @@
           <string>Тест</string>
          </property>
         </widget>
-        <widget class="QLabel" name="test">
-         <property name="geometry">
-          <rect>
-           <x>140</x>
-           <y>220</y>
-           <width>59</width>
-           <height>14</height>
-          </rect>
-         </property>
-         <property name="text">
-          <string>Класс:</string>
-         </property>
-        </widget>
         <widget class="QLabel" name="test_lbl">
          <property name="geometry">
           <rect>
@@ -321,19 +262,6 @@
           <string/>
          </property>
         </widget>
-        <widget class="QLabel" name="iterations">
-         <property name="geometry">
-          <rect>
-           <x>140</x>
-           <y>250</y>
-           <width>59</width>
-           <height>14</height>
-          </rect>
-         </property>
-         <property name="text">
-          <string>Итераций</string>
-         </property>
-        </widget>
         <widget class="QLabel" name="iterations_lbl">
          <property name="geometry">
           <rect>
@@ -341,6 +269,19 @@
            <y>250</y>
            <width>59</width>
            <height>14</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+        </widget>
+        <widget class="QLabel" name="learn_info">
+         <property name="geometry">
+          <rect>
+           <x>138</x>
+           <y>270</y>
+           <width>271</width>
+           <height>101</height>
           </rect>
          </property>
          <property name="text">

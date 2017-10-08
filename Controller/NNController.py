@@ -8,15 +8,6 @@ class NNController():
         self.mModel = inModel
         self.mView = NNView(self)
         self.mView.show()
-        self.params = {}
-
-    def set_params(self):
-        if self.mModel.__class__ == Perceptron:
-            self.params = {
-                            'Hebb': self.mView.ui.Hebb.isChecked(),
-                            'LMS' : self.mView.ui.LMS.isChecked(),
-                            'signal' : self.mView.ui.polar.isChecked()
-                           }
 
     def modelIsChanged(self, model):
         if model=='SLP':
@@ -25,6 +16,16 @@ class NNController():
             pass
 
     #region add data to model
+
+    def add_data(self, val, lbl, params):
+        if self.mModel.__class__ == Perceptron:
+            if params['Signal'] == 'polar':
+                val = self.polar(val)
+            elif params['Signal'] == 'bi_polar':
+                val = self.biPolar(val)
+            val= val[..., np.newaxis]
+            val[0,0,0] = lbl
+            self.mModel.data.append(val)
 
     def addDataX(self, val):
         if self.mModel.__class__ == Perceptron:
@@ -98,8 +99,8 @@ class NNController():
 
     #endregion
 
-    def learn(self):
-        iter = self.mModel.learn(self.params)
+    def learn(self, params):
+        iter = self.mModel.learn(params)
         return iter
 
     def test(self,img):

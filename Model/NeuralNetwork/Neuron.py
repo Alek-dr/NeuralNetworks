@@ -19,7 +19,7 @@ class Neuron:
     def adderOutput(self,inputs):
         k = len(inputs)
         out = 0
-        w = 1
+        w = 0
         for i in range(k):
             for j in range(k):
                 out += self.weights[w]*inputs[i][j]
@@ -29,6 +29,6 @@ class Neuron:
 
     def functionOutput(self, v):
         if self.activation == 'binary_treshold':
-            return binary_treshold(v)
+            return binary_treshold(v, self.bias)
         elif self.activation == 'bipolar_treshold':
-            return bipolar_treshold(v)
+            return bipolar_treshold(v, self.bias)

@@ -1,9 +1,8 @@
 class NNModel:
 
     def __init__(self):
-        self._X = []
-        self._Y = []
-        self._Test = []
+        self.data = []
+        self.test = []
         self._observers = []
 
     def addObserver(self, observer):

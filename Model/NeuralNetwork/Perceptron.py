@@ -1,15 +1,14 @@
 from Model.NNModel import NNModel
 from Model.NeuralNetwork.Neuron import Neuron
-from numpy import zeros, square
+from numpy import zeros, square, squeeze
 
 class Perceptron(NNModel):
 
     def __init__(self):
         self.neuron = Neuron(0)
         self._signal_type = 'polar'
-        self.dataX = []
-        self.dataY = []
-        self.dataTest = []
+        self.data = []
+        self.test = []
 
     @property
     def signalType(self):
@@ -21,10 +20,14 @@ class Perceptron(NNModel):
 
     def learn(self, params):
         iter = 0
-        if params['signal'] == True:
+        lbl = self.data[0][0,0,0]
+        img = squeeze(self.data[0], axis=2)
+
+        if params['signal'] == 'polar':
             self.neuron.activation = 'binary_treshold'
-        else:
+        elif params['signal'] == 'bi_polar':
             self.neuron.activation = 'bipolar_treshold'
+
         if (len(self.dataX)>0)&(len(self.dataY)>0):
             if self.neuron.weights.shape[0] == 0:
                 self.neuron.weights = zeros(square(self.dataX[0].shape[0])+1)
