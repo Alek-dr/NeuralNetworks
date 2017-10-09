@@ -31,6 +31,8 @@ class NNView(QMainWindow, NNModelObserver, metaclass=NNMeta):
         self.ui.LMS.clicked.connect(self.learn_alg)
         self.ui.polar.clicked.connect(self.signal_changed)
         self.ui.biPolar.clicked.connect(self.signal_changed)
+        self.ui.bipolar_lbl.clicked.connect(self.lbl_type_changed)
+        self.ui.binary_lbl.clicked.connect(self.lbl_type_changed)
         self.ui.tabWidget.currentChanged.connect(self.tab_changed)
         self.ui.test_btn.clicked.connect(self.test_clicked)
 
@@ -45,33 +47,47 @@ class NNView(QMainWindow, NNModelObserver, metaclass=NNMeta):
         self.mController.modelIsChanged(self.ui.tabWidget.currentWidget().objectName())
         self.params = {
             'Signal' :'',
-            'Learn'  :''
+            'Learn'  :'',
+            'Label'  :'',
+            'Neurons':''
         }
 
     def set_params(self):
         self.signal_changed()
         self.learn_alg()
+        self.lbl_type_changed()
+        self.params['Neurons'] = self.ui.number_neurons.value()
 
     def add_class(self):
         count = self.ui.data_tree.topLevelItemCount()
-        item = QTreeWidgetItem(['Класс '+str(count+1)])
+        item = QTreeWidgetItem(['Класс '+str(count)])
         self.ui.data_tree.addTopLevelItem(item)
 
     def tab_changed(self):
         self.mController.modelIsChanged(self.ui.tabWidget.currentWidget().objectName())
 
     def test_clicked(self):
-        label = self.mController.test(0)
-        self.ui.test_lbl.setText(str(label))
+        self.mController.test(0)
+        #self.ui.test_lbl.setText(str(label))
 
     def signal_changed(self):
         btn = self.sender()
-        self.mController.signal_type_changed(btn.objectName())
+        #self.mController.signal_type_changed(btn.objectName())
         if self.ui.tabWidget.currentWidget().objectName()=='SLP':
             if self.ui.polar.isChecked():
-                self.params['Signal'] = 'polar'
+                self.params['Signal'] = 'binary'
             elif self.ui.biPolar.isChecked():
                 self.params['Signal'] = 'bi_polar'
+            self.mController.signal_type_changed(self.params)
+
+    def lbl_type_changed(self):
+        btn = self.sender()
+        if self.ui.tabWidget.currentWidget().objectName() == 'SLP':
+            if self.ui.bipolar_lbl.isChecked():
+                self.params['Label'] = 'bi_polar'
+            elif self.ui.binary_lbl.isChecked():
+                self.params['Label'] = 'binary'
+            self.mController.label_type_changed(self.params)
 
     def learn_alg(self):
         if self.ui.tabWidget.currentWidget().objectName()=='SLP':
@@ -81,8 +97,8 @@ class NNView(QMainWindow, NNModelObserver, metaclass=NNMeta):
                 self.params['Learn'] = 'LMS'
 
     def learn_clicked(self):
-        iter = self.mController.learn(self.params)
-        self.ui.iterations_lbl.setText(str(iter))
+        self.set_params()
+        self.mController.learn(self.params)
 
     def treeSettings(self):
         self.ui.data_tree.setContextMenuPolicy(Qt.CustomContextMenu)
@@ -91,6 +107,8 @@ class NNView(QMainWindow, NNModelObserver, metaclass=NNMeta):
         self.popMenu.addAction(QtGui.QAction('Загрузить данные', self))
         self.popMenu.addAction(QtGui.QAction('Очистить', self))
         self.popMenu.triggered[QAction].connect(self.processtrigger)
+        item = QTreeWidgetItem(['Тест'])
+        self.ui.data_tree.addTopLevelItem(item)
 
     def processtrigger(self,q):
         self.set_params()
@@ -106,7 +124,10 @@ class NNView(QMainWindow, NNModelObserver, metaclass=NNMeta):
                     self.active_class_item.addChild(QTreeWidgetItem([str(f)]))
                     img = imread(f, mode='P')
                     lbl = self.active_class_item.text(0)[-1] #считаем, что не будет двузнычных меток
-                    self.mController.add_data(img,lbl,self.params)
+                    if self.active_class_item.text(0) == 'Тест':
+                        self.mController.add_test(img,self.params)
+                    else:
+                        self.mController.add_data(img,lbl,self.params)
         elif q.text()=='Очистить':
             pass
         self.active_class_item = None

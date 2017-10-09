@@ -1,83 +1,90 @@
 from Model.NNModel import NNModel
 from Model.NeuralNetwork.Neuron import Neuron
-from numpy import zeros, square, squeeze
+from numpy import zeros, square, squeeze, array, unique, ravel, multiply
 
 class Perceptron(NNModel):
 
     def __init__(self):
-        self.neuron = Neuron(0)
-        self._signal_type = 'polar'
+        #self.neuron = Neuron(0)
+        self._signal_type = 'binary'
+        self._lbl_type = 'binary'
         self.data = []
+        self.labels = []
         self.test = []
+        self.neurons = []
 
     @property
     def signalType(self):
         return self._signal_type
 
+    @property
+    def labelType(self):
+        return self._lbl_type
+
     @signalType.setter
     def signalType(self, val):
         self._signal_type = val
 
+    @labelType.setter
+    def labelType(self, val):
+        self._lbl_type = val
+
     def learn(self, params):
         iter = 0
-        lbl = self.data[0][0,0,0]
-        img = squeeze(self.data[0], axis=2)
+        n_neurons = params['Neurons']
+        self.labelType = params['Label']
+        for i in range(n_neurons):
+            self.neurons.append(Neuron(0))
+        if params['Signal'] == 'polar':
+            for n in self.neurons:
+                n.activation = 'binary_treshold'
+        elif params['Signal'] == 'bi_polar':
+            for n in self.neurons:
+                n.activation = 'bipolar_treshold'
 
-        if params['signal'] == 'polar':
-            self.neuron.activation = 'binary_treshold'
-        elif params['signal'] == 'bi_polar':
-            self.neuron.activation = 'bipolar_treshold'
-
-        if (len(self.dataX)>0)&(len(self.dataY)>0):
-            if self.neuron.weights.shape[0] == 0:
-                self.neuron.weights = zeros(square(self.dataX[0].shape[0])+1)
-            if len(self.dataX)>0:
-                if params['Hebb']==True:
-                    iter = self.Hebb(params['signal'])
-                elif params['LMS']==True:
-                    self.LMS()
+        if (len(self.data) > 0):
+            for n in self.neurons:
+                n.weights = zeros(square(self.data[0].shape[0]))
+            if params['Learn'] == 'Hebb':
+                self.Hebb()
         return iter
 
-    def Hebb(self, signal_type):
-        learn = False
-        iterations = 0
-        while not learn:
-            iterations+=1
-            w = 1
-            z = self.define_delta_w(signal_type, 1)
-            k = self.dataX[0].shape[0]
-            for x in self.dataX:
-                w = 1
-                for i in range(k):
-                    for j in range(k):
-                        self.neuron.weights[w] += x[i][j] * z
-                        w+=1
-            w = 1
-            self.neuron.weights[0] += self.neuron.bias*z
-            z = self.define_delta_w(signal_type, 0)
-            for y in self.dataY:
-                w = 1
-                for i in range(k):
-                    for j in range(k):
-                        self.neuron.weights[w] += y[i][j] * z
-                        w+=1
-            self.neuron.weights[0] += self.neuron.bias * z
-            has_learned = True
-            for x in self.dataX:
-                y = self.neuron.through(x)
-                if y!=1:
-                    has_learned=False
-                    break
-            if has_learned==False:
-                continue
+    def Hebb(self):
+        learned = False
+        while learned==False:
+            for i, n in enumerate(self.neurons):
+                i+=1
+                for j, x in enumerate(self.data):
+                    lbl = self.labels[j]
+                    lbl_ = self.define_label(lbl,i)
+                    self.correct(x, n, lbl_)
+            if self.check_stop()==True:
+                learned=True
+
+    def check_stop(self):
+        for i, n in enumerate(self.neurons):
+            i+=1
+            for j, x in enumerate(self.data):
+                lbl = self.labels[j]
+                lbl_ = self.define_label(lbl,i)
+                test_lbl = n.through(x)
+                if test_lbl!=lbl_:
+                    return False
+        return True
+
+    def define_label(self,lbl, n):
+        lbl = int(lbl)
+        if self._lbl_type=='binary':
+            if lbl==n:
+                return 1
             else:
-                for y in self.dataY:
-                    y = self.neuron.through(y)
-                    if y != -1:
-                        break
-            if has_learned==True:
-                learn=True
-        return iterations
+                return 0
+        elif self._lbl_type=='bi_polar':
+            if lbl==n:
+                return 1
+            else:
+                return -1
+
 
     def define_delta_w(self, signal, label):
         if signal==True:
@@ -94,17 +101,16 @@ class Perceptron(NNModel):
             else:
                 return -1
 
-    def correct(self,inputs,y):
+    def correct(self,inputs,n,y):
+        inputs = ravel(inputs)
         k = len(inputs)
-        w = 1
-        for i in range(k):
-            for j in range(k):
-                self.weights[w] += self.weights[w]*inputs[i][j]*y
+        lbl = zeros(shape=[k])
+        lbl.fill(y)
+        n.weights += multiply(inputs,lbl)
 
-    def test(self, img):
+    def test_x(self, img):
         #пока так
-        label = self.neuron.through(self.dataTest[0])
-        return label
+        self.neuron.through(self.test[img])
 
     def LMS(self):
         pass
