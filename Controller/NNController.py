@@ -20,7 +20,7 @@ class NNController():
     def add_data(self, val, lbl, params):
         if self.mModel.__class__ == Perceptron:
             if params['Signal'] == 'binary':
-                val = self.polar(val)
+                val = self.binary(val)
             elif params['Signal'] == 'bi_polar':
                 val = self.biPolar(val)
             # val= val[..., np.newaxis]
@@ -30,8 +30,8 @@ class NNController():
 
     def add_test(self, val, params):
         if self.mModel.__class__ == Perceptron:
-            if params['Signal'] == 'polar':
-                val = self.polar(val)
+            if params['Signal'] == 'binary':
+                val = self.binary(val)
             elif params['Signal'] == 'bi_polar':
                 val = self.biPolar(val)
             self.mModel.test.append(val)
@@ -40,7 +40,7 @@ class NNController():
 
     #region signal
 
-    def polar(self, data):
+    def binary(self, data):
         data = np.where(data==255,0,1)
         return data
 
@@ -72,15 +72,34 @@ class NNController():
     def label_type_changed(self, params):
         self.mModel.labelType = params['Label']
 
+    def activation_changed(self, params):
+        params = self.rename_function(params)
+        self.mModel.set_activation(params)
+
     #endregion
 
     def learn(self, params):
-        iter = self.mModel.learn(params)
-        return iter
+        params = self.rename_function(params)
+        return self.mModel.learn(params)
 
     def test(self,img):
-        #потом придумаю как передать конкретную картинку
-        self.mModel.test_x(img)
+        return self.mModel.test_x(img)
+
+    def delete_data(self, label):
+        labels = np.array(self.mModel.labels)
+        lbl2del = np.squeeze(np.where(labels==label), axis=1).astype(np.uint32)
+        self.mModel.data = np.delete(self.mModel.data, lbl2del).tolist()
+        self.mModel.labels = np.delete(self.mModel.labels, lbl2del).tolist()
+
+    def delete_test(self):
+        self.mModel.test.clear()
+
+    def rename_function(self,params):
+        if params['Activation']=='Бинарный порог':
+            params['Activation'] = 'binary_treshold'
+        elif params['Activation']=='Биполярный порог':
+            params['Activation'] = 'bipolar_treshold'
+        return params
 
 
 

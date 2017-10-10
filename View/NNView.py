@@ -21,9 +21,6 @@ class NNView(QMainWindow, NNModelObserver, metaclass=NNMeta):
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
 
-        #регистрируем представление в качестве наблюдателя
-        #self.mModel.addObserver(self)
-
         #Добавляем обработчики событий
         self.ui.add_class.clicked.connect(self.add_class)
         self.ui.Learn.clicked.connect(self.learn_clicked)
@@ -40,16 +37,25 @@ class NNView(QMainWindow, NNModelObserver, metaclass=NNMeta):
         self.ui.img_1.setScaledContents(True)
         self.ui.img_2.setScaledContents(True)
         self.ui.img_3.setScaledContents(True)
+        self.current_test_id = 0
 
         self.active_class_item = None
         self.connect(self.ui.data_tree, SIGNAL("itemClicked(QTreeWidgetItem*, int)"), self.onClickItem)
+        self.connect(self.ui.activation, SIGNAL("activated(const QString&)"), self.activation_changed)
+
+        validator = QtGui.QDoubleValidator()
+        self.ui.bias.setValidator(validator)
 
         self.mController.modelIsChanged(self.ui.tabWidget.currentWidget().objectName())
+        act_functions = ['Бинарный порог', 'Биполярный порог']
+        self.ui.activation.addItems(act_functions)
         self.params = {
             'Signal' :'',
             'Learn'  :'',
             'Label'  :'',
-            'Neurons':''
+            'Neurons':'',
+            'Activation':'',
+            'Bias': ''
         }
 
     def set_params(self):
@@ -57,6 +63,11 @@ class NNView(QMainWindow, NNModelObserver, metaclass=NNMeta):
         self.learn_alg()
         self.lbl_type_changed()
         self.params['Neurons'] = self.ui.number_neurons.value()
+        self.params['Activation'] = self.ui.activation.currentText()
+        bias = self.ui.bias.text()
+        if bias=='':
+            bias = 0
+        self.params['Bias'] = bias
 
     def add_class(self):
         count = self.ui.data_tree.topLevelItemCount()
@@ -66,9 +77,17 @@ class NNView(QMainWindow, NNModelObserver, metaclass=NNMeta):
     def tab_changed(self):
         self.mController.modelIsChanged(self.ui.tabWidget.currentWidget().objectName())
 
+    def activation_changed(self):
+        self.set_params()
+        self.mController.activation_changed(self.params)
+
     def test_clicked(self):
-        self.mController.test(0)
-        #self.ui.test_lbl.setText(str(label))
+        self.ui.info.clear()
+        outputs = self.mController.test(self.current_test_id)
+        text = self.ui.info.text()
+        self.ui.info.setText(text + '\n' + 'Выходы нейронов: ' + '\n')
+        for i in outputs:
+            self.ui.info.setText(self.ui.info.text() + str(i) + '\n')
 
     def signal_changed(self):
         btn = self.sender()
@@ -97,8 +116,11 @@ class NNView(QMainWindow, NNModelObserver, metaclass=NNMeta):
                 self.params['Learn'] = 'LMS'
 
     def learn_clicked(self):
+        self.ui.info.clear()
         self.set_params()
-        self.mController.learn(self.params)
+        iter = self.mController.learn(self.params)
+        text = 'Количество итераций: ' + str(iter)
+        self.ui.info.setText(text)
 
     def treeSettings(self):
         self.ui.data_tree.setContextMenuPolicy(Qt.CustomContextMenu)
@@ -123,13 +145,20 @@ class NNView(QMainWindow, NNModelObserver, metaclass=NNMeta):
                 for f in filenames:
                     self.active_class_item.addChild(QTreeWidgetItem([str(f)]))
                     img = imread(f, mode='P')
-                    lbl = self.active_class_item.text(0)[-1] #считаем, что не будет двузнычных меток
+                    lbl = self.active_class_item.text(0)[-1] #считаем, что не будет двузначных меток
                     if self.active_class_item.text(0) == 'Тест':
                         self.mController.add_test(img,self.params)
                     else:
                         self.mController.add_data(img,lbl,self.params)
         elif q.text()=='Очистить':
-            pass
+            count = self.active_class_item.childCount()
+            for _ in range(count):
+                self.active_class_item.removeChild(self.active_class_item.child(0))
+            if self.active_class_item.text(0)=='Тест':
+                self.mController.delete_test()
+            else:
+                lbl = self.active_class_item.text(0)[-1]
+                self.mController.delete_data(lbl)
         self.active_class_item = None
 
     def on_context_menu(self, point):
@@ -150,16 +179,14 @@ class NNView(QMainWindow, NNModelObserver, metaclass=NNMeta):
             parent_name = item.parent().text(0)
             i = 1
             if parent_name=='Тест':
+                for j in range(item.parent().childCount()):
+                    if item.parent().child(j) == item:
+                        self.current_test_id = j
+                        break
                 path = item.text(column)
                 self.ui.img_3.setPixmap(QPixmap(path))
                 img = imread(path)
                 self.current_test = img
-                if self.current_class_1 is not None:
-                    sim_1 = similarity(img, self.current_class_1)
-                    self.ui.sim_1.setText(str(sim_1))
-                if self.current_class_2 is not None:
-                    sim_2 = similarity(img, self.current_class_2)
-                    self.ui.sim_2.setText(str(sim_2))
             else:
                 parent_ = parent + str(i)
                 while parent_name!=parent_:
@@ -168,18 +195,8 @@ class NNView(QMainWindow, NNModelObserver, metaclass=NNMeta):
                 path = item.text(column)
 
                 if parent_=='Класс 1':
-                    img = imread(path)
                     self.ui.img_1.setPixmap(QPixmap(path))
-                    self.current_class_1 = imread(path)
-                    if self.current_test is not None:
-                        sim_1 = similarity(img, self.current_test)
-                        self.ui.sim_1.setText(str(sim_1))
                 else:
-                    img = imread(path)
                     self.ui.img_2.setPixmap(QPixmap(path))
-                    self.current_class_2 = imread(path)
-                    if self.current_test is not None:
-                        sim_2 = similarity(img, self.current_test)
-                        self.ui.sim_2.setText(str(sim_2))
         except:
             pass
