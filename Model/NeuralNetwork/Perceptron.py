@@ -1,6 +1,6 @@
 from Model.NNModel import NNModel
 from Model.NeuralNetwork.Neuron import Neuron
-from numpy import zeros, square, squeeze, array, unique, ravel, multiply
+from numpy import zeros, square, squeeze, array, unique, ravel, multiply, double
 
 class Perceptron(NNModel):
 
@@ -39,7 +39,7 @@ class Perceptron(NNModel):
             self.neurons[i].bias = params['Bias']
         if (len(self.data) > 0):
             for n in self.neurons:
-                n.weights = zeros(square(self.data[0].shape[0]))
+                n.weights = zeros(self.data[0].size)
             if params['Learn'] == 'Hebb':
                 iter = self.Hebb()
         return iter
@@ -59,16 +59,34 @@ class Perceptron(NNModel):
                 learned=True
         return iter
 
+    def set_bias(self, val):
+        for n in self.neurons:
+            n.bias = double(val)
+
     def check_stop(self):
         for i, n in enumerate(self.neurons):
             i+=1
             for j, x in enumerate(self.data):
                 lbl = self.labels[j]
-                lbl_ = self.define_lbl_for_check(lbl,i)
+                lbl_ = self.define_label(lbl,i)
                 test_lbl = n.through(x)
+                lbl_, test_lbl = self.label_definition(lbl_, test_lbl)
                 if test_lbl!=lbl_:
                     return False
         return True
+
+    def label_definition(self, lbl_, test_lbl):
+        if self._lbl_type == 'binary':
+            if lbl_ == -1:
+                lbl_ = 0
+            if test_lbl == -1:
+                test_lbl = 0
+        elif self._lbl_type == 'bi_polar':
+            if lbl_ == 0:
+                lbl_ = -1
+            if test_lbl == 0:
+                test_lbl = -1
+        return lbl_, test_lbl
 
     def define_label(self,lbl, n):
         lbl = int(lbl)
@@ -101,10 +119,18 @@ class Perceptron(NNModel):
         for n in self.neurons:
             n.activation = params['Activation']
 
-    def test_x(self, img):
+    def test_x(self, img, params):
+        self._lbl_type = params['Label']
         outputs = zeros(len(self.neurons))
         for i, n in enumerate(self.neurons):
-            outputs[i] = n.through(self.test[img])
+            lbl = n.through(self.test[img])
+            if self._lbl_type=='binary':
+                if lbl == -1:
+                    lbl = 0
+            elif self._lbl_type=='bi_polar':
+                if lbl ==0:
+                    lbl = -1
+            outputs[i] = lbl
         return outputs
 
     def LMS(self):

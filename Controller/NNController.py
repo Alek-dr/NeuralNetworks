@@ -82,8 +82,10 @@ class NNController():
         params = self.rename_function(params)
         return self.mModel.learn(params)
 
-    def test(self,img):
-        return self.mModel.test_x(img)
+    def test(self,img, params):
+        params = self.rename_function(params)
+        self.mModel.set_activation(params)
+        return self.mModel.test_x(img,params)
 
     def delete_data(self, label):
         labels = np.array(self.mModel.labels)
@@ -100,6 +102,9 @@ class NNController():
         elif params['Activation']=='Биполярный порог':
             params['Activation'] = 'bipolar_treshold'
         return params
+
+    def set_bias(self, params):
+        self.mModel.set_bias(params['Bias'])
 
 
 

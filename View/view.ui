@@ -59,7 +59,7 @@
          </rect>
         </property>
         <property name="text">
-         <string>Полярный</string>
+         <string>Бинарный</string>
         </property>
         <property name="checked">
          <bool>true</bool>
@@ -382,7 +382,18 @@
       </widget>
      </item>
      <item>
-      <widget class="QLineEdit" name="bias"/>
+      <layout class="QHBoxLayout" name="horizontalLayout">
+       <item>
+        <widget class="QLineEdit" name="bias"/>
+       </item>
+       <item>
+        <widget class="QPushButton" name="setBias">
+         <property name="text">
+          <string>Установить</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
      </item>
     </layout>
    </widget>

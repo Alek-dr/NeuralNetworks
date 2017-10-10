@@ -1,4 +1,4 @@
-from numpy import zeros, dot, square, ravel
+from numpy import zeros, dot, square, ravel, double
 
 from Model.NeuralNetwork.ActivationFunctions import bipolar_treshold, binary_treshold
 
@@ -20,7 +20,7 @@ class Neuron:
 
     def adderOutput(self,inputs):
         inputs = ravel(inputs)
-        out = dot(self.weights,inputs) + self.bias
+        out = dot(self.weights,inputs) + double(self.bias)
         return out
 
     def functionOutput(self, v):

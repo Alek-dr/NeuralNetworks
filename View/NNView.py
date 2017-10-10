@@ -32,6 +32,7 @@ class NNView(QMainWindow, NNModelObserver, metaclass=NNMeta):
         self.ui.binary_lbl.clicked.connect(self.lbl_type_changed)
         self.ui.tabWidget.currentChanged.connect(self.tab_changed)
         self.ui.test_btn.clicked.connect(self.test_clicked)
+        self.ui.setBias.clicked.connect(self.set_bias)
 
         self.treeSettings()
         self.ui.img_1.setScaledContents(True)
@@ -69,6 +70,10 @@ class NNView(QMainWindow, NNModelObserver, metaclass=NNMeta):
             bias = 0
         self.params['Bias'] = bias
 
+    def set_bias(self):
+        self.set_params()
+        self.mController.set_bias(self.params)
+
     def add_class(self):
         count = self.ui.data_tree.topLevelItemCount()
         item = QTreeWidgetItem(['Класс '+str(count)])
@@ -83,7 +88,7 @@ class NNView(QMainWindow, NNModelObserver, metaclass=NNMeta):
 
     def test_clicked(self):
         self.ui.info.clear()
-        outputs = self.mController.test(self.current_test_id)
+        outputs = self.mController.test(self.current_test_id, self.params)
         text = self.ui.info.text()
         self.ui.info.setText(text + '\n' + 'Выходы нейронов: ' + '\n')
         for i in outputs:
