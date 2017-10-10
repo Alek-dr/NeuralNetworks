@@ -18,17 +18,18 @@ class NNController():
     #region add data to model
 
     def add_data(self, val, lbl, params):
+        #Добавление данных для обучения
         if self.mModel.__class__ == Perceptron:
             if params['Signal'] == 'binary':
                 val = self.binary(val)
             elif params['Signal'] == 'bi_polar':
                 val = self.biPolar(val)
-            # val= val[..., np.newaxis]
-            # val[0,0,0] = lbl
             self.mModel.labels.append(lbl)
             self.mModel.data.append(val)
 
     def add_test(self, val, params):
+        #Добавление данных для теста
+        #эти данные не содержат метки класса
         if self.mModel.__class__ == Perceptron:
             if params['Signal'] == 'binary':
                 val = self.binary(val)
@@ -49,6 +50,8 @@ class NNController():
         return data
 
     def signal_type_changed(self, params):
+        #Два типа сигналов: {1,0}, {1,-1}
+        #Значения изменяются в самой модели персептрона
         signal_type = params['Signal']
         if (signal_type=='binary') & (self.mModel.signalType!='binary'):
             if len(self.mModel.data)>0:

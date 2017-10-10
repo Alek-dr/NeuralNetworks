@@ -1,7 +1,5 @@
 from numpy import zeros, dot, square, ravel, double
-
 from Model.NeuralNetwork.ActivationFunctions import bipolar_treshold, binary_treshold
-
 
 class Neuron:
 

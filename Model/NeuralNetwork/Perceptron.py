@@ -1,16 +1,16 @@
 from Model.NNModel import NNModel
 from Model.NeuralNetwork.Neuron import Neuron
-from numpy import zeros, square, squeeze, array, unique, ravel, multiply, double
+from numpy import zeros, ravel, multiply, double
 
 class Perceptron(NNModel):
 
     def __init__(self):
-        self._signal_type = 'binary'
-        self._lbl_type = 'binary'
-        self.data = []
-        self.labels = []
-        self.test = []
-        self.neurons = []
+        self._signal_type = 'binary' # тип сигнала - {1,0} или {1,-1}
+        self._lbl_type = 'binary' #тип меток - {1,0} или {1,-1}
+        self.data = [] #данные для обучения
+        self.labels = [] #метки классов
+        self.test = [] #данные для теста
+        self.neurons = [] #нейроны
 
     @property
     def signalType(self):
@@ -29,6 +29,7 @@ class Perceptron(NNModel):
         self._lbl_type = val
 
     def learn(self, params):
+        #Обучение, params содержит всю необходимую информацию
         iter = 0
         n_neurons = params['Neurons']
         self.labelType = params['Label']
@@ -45,6 +46,7 @@ class Perceptron(NNModel):
         return iter
 
     def Hebb(self):
+        #Обучение Хебба
         learned = False
         iter = 0
         while learned==False:
@@ -64,6 +66,7 @@ class Perceptron(NNModel):
             n.bias = double(val)
 
     def check_stop(self):
+        #Проврка условия останова для Хебба
         for i, n in enumerate(self.neurons):
             i+=1
             for j, x in enumerate(self.data):
@@ -76,6 +79,9 @@ class Perceptron(NNModel):
         return True
 
     def label_definition(self, lbl_, test_lbl):
+        #Придерживаемся идеи, что метки и функция активации - не одно и то же!!!
+        #т.е. если метка класса -1, а функция активации вернула 0, это класс с меткой -1
+        #здесь два параметра, потому что авторефакторинг
         if self._lbl_type == 'binary':
             if lbl_ == -1:
                 lbl_ = 0
@@ -95,20 +101,8 @@ class Perceptron(NNModel):
         else:
             return -1
 
-    def define_lbl_for_check(self,lbl, n):
-        lbl = int(lbl)
-        if self._lbl_type=='binary':
-            if lbl==n:
-                return 1
-            else:
-                return 0
-        elif self._lbl_type=='bi_polar':
-            if lbl==n:
-                return 1
-            else:
-                return -1
-
     def correct(self,inputs,n,y):
+        #Корректировка весов
         inputs = ravel(inputs)
         k = len(inputs)
         lbl = zeros(shape=[k])
@@ -116,20 +110,17 @@ class Perceptron(NNModel):
         n.weights += multiply(inputs,lbl)
 
     def set_activation(self, params):
+        #Установка функции активации
         for n in self.neurons:
             n.activation = params['Activation']
 
     def test_x(self, img, params):
+        #Тест входного изображения img
         self._lbl_type = params['Label']
         outputs = zeros(len(self.neurons))
         for i, n in enumerate(self.neurons):
             lbl = n.through(self.test[img])
-            if self._lbl_type=='binary':
-                if lbl == -1:
-                    lbl = 0
-            elif self._lbl_type=='bi_polar':
-                if lbl ==0:
-                    lbl = -1
+            lbl, _ = self.label_definition(lbl, 1)
             outputs[i] = lbl
         return outputs
 
