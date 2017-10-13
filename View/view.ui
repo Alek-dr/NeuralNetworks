@@ -375,6 +375,9 @@
       <widget class="QComboBox" name="activation"/>
      </item>
      <item>
+      <widget class="QLineEdit" name="function_param"/>
+     </item>
+     <item>
       <widget class="QLabel" name="label_5">
        <property name="text">
         <string>Сигнал смещения</string>

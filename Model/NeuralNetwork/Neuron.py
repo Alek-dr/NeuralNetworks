@@ -1,5 +1,5 @@
 from numpy import zeros, dot, square, ravel, double
-from Model.NeuralNetwork.ActivationFunctions import bipolar_treshold, binary_treshold
+from Model.NeuralNetwork.ActivationFunctions import *
 
 class Neuron:
 
@@ -26,3 +26,5 @@ class Neuron:
             return binary_treshold(v)
         elif self.activation == 'bipolar_treshold':
             return bipolar_treshold(v)
+        elif self.activation == 'radially_symmetric':
+            return radially_symmetric(v)

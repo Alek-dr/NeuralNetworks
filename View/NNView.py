@@ -48,7 +48,7 @@ class NNView(QMainWindow, NNModelObserver, metaclass=NNMeta):
         self.ui.bias.setValidator(validator)
 
         self.mController.modelIsChanged(self.ui.tabWidget.currentWidget().objectName())
-        act_functions = ['Бинарный порог', 'Биполярный порог']
+        act_functions = ['Бинарный порог', 'Биполярный порог', 'Радиально-симметричная']
         self.ui.activation.addItems(act_functions)
         self.params = {
             'Signal' :'',
@@ -56,7 +56,8 @@ class NNView(QMainWindow, NNModelObserver, metaclass=NNMeta):
             'Label'  :'',
             'Neurons':'',
             'Activation':'',
-            'Bias': ''
+            'Bias': '',
+            'Function param': '',
         }
 
     def set_params(self):
@@ -69,6 +70,10 @@ class NNView(QMainWindow, NNModelObserver, metaclass=NNMeta):
         if bias=='':
             bias = 0
         self.params['Bias'] = bias
+        k = self.ui.function_param.text()
+        if k=='':
+            k = 0.5
+        self.params['Function param'] = k
 
     def set_bias(self):
         self.set_params()

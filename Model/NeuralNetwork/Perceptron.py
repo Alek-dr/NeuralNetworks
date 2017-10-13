@@ -1,6 +1,7 @@
 from Model.NNModel import NNModel
 from Model.NeuralNetwork.Neuron import Neuron
 from numpy import zeros, ravel, multiply, double
+from Model.NeuralNetwork.ActivationFunctions import function_params
 
 class Perceptron(NNModel):
 
@@ -34,6 +35,8 @@ class Perceptron(NNModel):
         n_neurons = params['Neurons']
         self.labelType = params['Label']
         self.neurons.clear()
+
+        function_params['K'] = params['Function param']
         for i in range(n_neurons):
             self.neurons.append(Neuron(i))
             self.neurons[i].activation = params['Activation']

@@ -91,10 +91,13 @@ class NNController():
         return self.mModel.test_x(img,params)
 
     def delete_data(self, label):
-        labels = np.array(self.mModel.labels)
-        lbl2del = np.squeeze(np.where(labels==label), axis=1).astype(np.uint32)
-        self.mModel.data = np.delete(self.mModel.data, lbl2del).tolist()
-        self.mModel.labels = np.delete(self.mModel.labels, lbl2del).tolist()
+        pass
+        #Это источник багов
+        #tolist() работает не так, как я хочу, чем гневает несказанно
+        # labels = np.array(self.mModel.labels)
+        # lbl2del = np.squeeze(np.where(labels==label), axis=1).astype(np.uint32)
+        # self.mModel.data = np.delete(self.mModel.data, lbl2del).tolist()
+        # self.mModel.labels = np.delete(self.mModel.labels, lbl2del).tolist()
 
     def delete_test(self):
         self.mModel.test.clear()
@@ -104,6 +107,8 @@ class NNController():
             params['Activation'] = 'binary_treshold'
         elif params['Activation']=='Биполярный порог':
             params['Activation'] = 'bipolar_treshold'
+        elif params['Activation'] == 'Радиально-симметричная':
+            params['Activation'] = 'radially_symmetric'
         return params
 
     def set_bias(self, params):
