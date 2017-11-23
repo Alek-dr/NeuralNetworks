@@ -40,6 +40,9 @@ class NNView(QMainWindow, NNModelObserver, metaclass=NNMeta):
         self.ui.img_3.setScaledContents(True)
         self.current_test_id = 0
 
+        self.img1 = None
+        self.img2 = None
+
         self.active_class_item = None
         self.connect(self.ui.data_tree, SIGNAL("itemClicked(QTreeWidgetItem*, int)"), self.onClickItem)
         self.connect(self.ui.activation, SIGNAL("activated(const QString&)"), self.activation_changed)
@@ -93,6 +96,7 @@ class NNView(QMainWindow, NNModelObserver, metaclass=NNMeta):
 
     def test_clicked(self):
         self.ui.info.clear()
+        self.set_params()
         outputs = self.mController.test(self.current_test_id, self.params)
         text = self.ui.info.text()
         self.ui.info.setText(text + '\n' + 'Выходы нейронов: ' + '\n')
@@ -197,6 +201,7 @@ class NNView(QMainWindow, NNModelObserver, metaclass=NNMeta):
                 self.ui.img_3.setPixmap(QPixmap(path))
                 img = imread(path)
                 self.current_test = img
+                self.set_sim()
             else:
                 parent_ = parent + str(i)
                 while parent_name!=parent_:
@@ -206,7 +211,18 @@ class NNView(QMainWindow, NNModelObserver, metaclass=NNMeta):
 
                 if parent_=='Класс 1':
                     self.ui.img_1.setPixmap(QPixmap(path))
+                    self.img1 = imread(path)
+                    self.set_sim()
                 else:
                     self.ui.img_2.setPixmap(QPixmap(path))
+                    self.img2 = imread(path)
+                    self.set_sim()
         except:
             pass
+
+    def set_sim(self):
+        s1 = similarity(self.current_test, self.img1)
+        s2 = similarity(self.current_test, self.img2)
+        self.ui.learn_info.clear()
+        text = 'Класс 1: ' + str(s1) + '\n' + 'Класс 2: ' + str(s2)
+        self.ui.learn_info.setText(text)

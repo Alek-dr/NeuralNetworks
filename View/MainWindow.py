@@ -138,7 +138,7 @@ class Ui_MainWindow(object):
         self.iterations_lbl.setText(_fromUtf8(""))
         self.iterations_lbl.setObjectName(_fromUtf8("iterations_lbl"))
         self.learn_info = QtGui.QLabel(self.SLP)
-        self.learn_info.setGeometry(QtCore.QRect(138, 270, 271, 101))
+        self.learn_info.setGeometry(QtCore.QRect(10, 310, 101, 101))
         self.learn_info.setText(_fromUtf8(""))
         self.learn_info.setObjectName(_fromUtf8("learn_info"))
         self.tabWidget.addTab(self.SLP, _fromUtf8(""))

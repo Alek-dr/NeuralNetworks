@@ -119,6 +119,7 @@ class Perceptron(NNModel):
 
     def test_x(self, img, params):
         #Тест входного изображения img
+        function_params['K'] = params['Function param']
         self._lbl_type = params['Label']
         outputs = zeros(len(self.neurons))
         for i, n in enumerate(self.neurons):

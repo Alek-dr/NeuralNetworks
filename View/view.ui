@@ -334,9 +334,9 @@
         <widget class="QLabel" name="learn_info">
          <property name="geometry">
           <rect>
-           <x>138</x>
-           <y>270</y>
-           <width>271</width>
+           <x>10</x>
+           <y>310</y>
+           <width>101</width>
            <height>101</height>
           </rect>
          </property>
