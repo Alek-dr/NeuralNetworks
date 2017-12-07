@@ -59,7 +59,17 @@ class Perceptron(NNModel):
                 for j, x in enumerate(self.data):
                     lbl = self.labels[j]
                     lbl_ = self.define_label(lbl,i)
-                    self.correct(x, n, lbl_)
+
+                    test_lbl = n.through(x)
+                    _, test_lbl = self.label_definition(lbl_, test_lbl)
+
+                    if lbl_!=test_lbl:
+                        if test_lbl==-1:
+                            #Увеличить веса
+                            self.correct(x, n, lbl_)
+                        else:
+                            #Уменьшить веса
+                            self.correct(x, n, lbl_)
             if self.check_stop()==True:
                 learned=True
         return iter
@@ -109,7 +119,8 @@ class Perceptron(NNModel):
         inputs = ravel(inputs)
         k = len(inputs)
         lbl = zeros(shape=[k])
-        lbl.fill(y)
+        lbl[inputs==1] = y
+        #lbl.fill(y)
         n.weights += multiply(inputs,lbl)
 
     def set_activation(self, params):
