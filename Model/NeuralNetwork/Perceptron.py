@@ -54,8 +54,7 @@ class Perceptron(NNModel):
         iter = 0
         while learned==False:
             iter+=1
-            for i, n in enumerate(self.neurons):
-                i+=1
+            for i, n in enumerate(self.neurons, start=1):
                 for j, x in enumerate(self.data):
                     lbl = self.labels[j]
                     lbl_ = self.define_label(lbl,i)
@@ -64,12 +63,8 @@ class Perceptron(NNModel):
                     _, test_lbl = self.label_definition(lbl_, test_lbl)
 
                     if lbl_!=test_lbl:
-                        if test_lbl==-1:
-                            #Увеличить веса
-                            self.correct(x, n, lbl_)
-                        else:
-                            #Уменьшить веса
-                            self.correct(x, n, lbl_)
+                        self.correct(x, n, lbl_)
+
             if self.check_stop()==True:
                 learned=True
         return iter
