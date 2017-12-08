@@ -125,9 +125,9 @@ class Perceptron(NNModel):
         inputs = ravel(inputs)
         E = d-y
         k = len(inputs)
-        lbl = zeros(shape=[k])
-        lbl[inputs == 1] = 1
-        n.weights += n.weights + step*E*lbl
+        x = zeros(shape=[k])
+        x[inputs == 1] = 1
+        n.weights += step*E*x
 
     def set_activation(self, params):
         #Установка функции активации
@@ -140,8 +140,8 @@ class Perceptron(NNModel):
         self._lbl_type = params['Label']
         outputs = zeros(len(self.neurons))
         for i, n in enumerate(self.neurons):
-            lbl = n.through(self.test[img])
-            lbl, _ = self.label_definition(lbl, 1)
+            lbl,_ = n.through(self.test[img])
+            lbl,_ = self.label_definition(lbl, 1)
             outputs[i] = lbl
         return outputs
 
