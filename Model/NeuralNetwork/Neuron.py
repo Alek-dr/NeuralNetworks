@@ -14,7 +14,7 @@ class Neuron:
             self.weights = zeros(square(inputs.shape[0]))
         out = self.adderOutput(inputs)
         y = self.functionOutput(out)
-        return y
+        return y, out
 
     def adderOutput(self,inputs):
         inputs = ravel(inputs)

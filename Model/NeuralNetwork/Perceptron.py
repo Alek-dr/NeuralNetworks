@@ -46,6 +46,8 @@ class Perceptron(NNModel):
                 n.weights = zeros(self.data[0].size)
             if params['Learn'] == 'Hebb':
                 iter = self.Hebb()
+            elif params['Learn'] == 'LMS':
+                iter = self.LMS()
         return iter
 
     def Hebb(self):
@@ -59,11 +61,11 @@ class Perceptron(NNModel):
                     lbl = self.labels[j]
                     lbl_ = self.define_label(lbl,i)
 
-                    test_lbl = n.through(x)
+                    test_lbl, _ = n.through(x)
                     _, test_lbl = self.label_definition(lbl_, test_lbl)
 
                     if lbl_!=test_lbl:
-                        self.correct(x, n, lbl_)
+                        self.correct_hebb(x, n, lbl_)
 
             if self.check_stop()==True:
                 learned=True
@@ -80,7 +82,7 @@ class Perceptron(NNModel):
             for j, x in enumerate(self.data):
                 lbl = self.labels[j]
                 lbl_ = self.define_label(lbl,i)
-                test_lbl = n.through(x)
+                test_lbl,_ = n.through(x)
                 lbl_, test_lbl = self.label_definition(lbl_, test_lbl)
                 if test_lbl!=lbl_:
                     return False
@@ -109,7 +111,7 @@ class Perceptron(NNModel):
         else:
             return -1
 
-    def correct(self,inputs,n,y):
+    def correct_hebb(self,inputs,n,y):
         #Корректировка весов
         inputs = ravel(inputs)
         k = len(inputs)
@@ -117,6 +119,15 @@ class Perceptron(NNModel):
         lbl[inputs==1] = y
         #lbl.fill(y)
         n.weights += multiply(inputs,lbl)
+
+    def correct_delta(self,inputs,n,y,d, step):
+        #Корректировка весов
+        inputs = ravel(inputs)
+        E = d-y
+        k = len(inputs)
+        lbl = zeros(shape=[k])
+        lbl[inputs == 1] = 1
+        n.weights += n.weights + step*E*lbl
 
     def set_activation(self, params):
         #Установка функции активации
@@ -135,4 +146,24 @@ class Perceptron(NNModel):
         return outputs
 
     def LMS(self):
-        pass
+        # Дельта-правило
+        learned = False
+        iter = 0
+        step = float(function_params['K'])
+        while learned == False:
+            iter += 1
+            for i, n in enumerate(self.neurons, start=1):
+                for j, x in enumerate(self.data):
+                    lbl = self.labels[j]
+                    lbl_ = self.define_label(lbl, i)
+
+                    #u - выход нейрона без функции активации
+                    test_lbl, u = n.through(x)
+                    _, test_lbl = self.label_definition(lbl_, test_lbl)
+
+                    if lbl_ != test_lbl:
+                        self.correct_delta(x, n, test_lbl, lbl_, step)
+
+            if self.check_stop() == True:
+                learned = True
+        return iter
